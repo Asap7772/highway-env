@@ -21,3 +21,8 @@ _build
 
 # Outputs
 **/out/*
+
+data/
+test/
+wandb/
+scripts/wandb/
