@@ -2,6 +2,10 @@ from itertools import product
 from typing import List, Dict, TYPE_CHECKING, Optional, Union, Tuple
 from gym import spaces
 import numpy as np
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 import pandas as pd
 
 from highway_env import utils

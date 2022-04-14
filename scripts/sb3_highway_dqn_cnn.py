@@ -10,6 +10,7 @@ import argparse
 from functools import partial
 import os
 
+import wandb
 
 def train_env(env_name) -> gym.Env:
     env = gym.make(env_name)
@@ -36,13 +37,19 @@ if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description='Train or test DQN model for highway-fast')
     argparser.add_argument('--env', type=str, help='environment ID', default='highway-v0')
     argparser.add_argument('--log_path', type=str, help='Logging Location', default='data/')
-    argparser.add_argument('--batch_size', type=int, help='Batch size for training', default=32)
+    argparser.add_argument('--batch_size', type=int, help='Batch size for training', default=256)
+    argparser.add_argument('--discount', type=float, help='Learning rate', default=0.975)
+    argparser.add_argument('--exploration_fraction', type=float, help='Exploration fraction', default=0.7)
     args = argparser.parse_args()
 
     trainenvfunc = partial(train_env, args.env)
     testenvfunc = partial(test_env, args.env)
 
     log_path = os.path.join(args.log_path, "cnn_" + args.env.replace("-v0", "")+'/')
+    
+    wandb.init(project="highway-env", reinit=True, settings=wandb.Settings(start_method="fork"))
+    wandb.run.name = log_path.split("/")[-2]
+    wandb.run.save()
 
     # Train
     model = DQN('CnnPolicy', DummyVecEnv([trainenvfunc]),
@@ -50,11 +57,11 @@ if __name__ == '__main__':
                 buffer_size=15000,
                 learning_starts=200,
                 batch_size=args.batch_size,
-                gamma=0.8,
+                gamma=args.discount,
                 train_freq=1,
                 gradient_steps=1,
                 target_update_interval=50,
-                exploration_fraction=0.7,
+                exploration_fraction=args.exploration_fraction,
                 verbose=2,
                 tensorboard_log=log_path)
     
@@ -107,6 +114,9 @@ if __name__ == '__main__':
             self.logger.record('rewards std', replay_data.rewards.std().item())
             self.logger.record('rewards max', replay_data.rewards.max().item())
             self.logger.record('rewards min', replay_data.rewards.min().item())
+            
+            for x in self.logger.name_to_value:
+                wandb.log({x: self.logger.name_to_value[x]})
             
             return True
     
