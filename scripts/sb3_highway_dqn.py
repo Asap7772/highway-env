@@ -33,7 +33,7 @@ if __name__ == '__main__':
     args_dict = vars(args)
     
     str_args = ["_" + str(k) + '=' + str(v) for k, v in args_dict.items() if k not in ['log_path']]
-    hyperparam_str = " ".join(str_args)
+    hyperparam_str = "".join(str_args)
     print(hyperparam_str)
 
     log_path = os.path.join(args.log_path, 'exp' + hyperparam_str +'/')
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     env = gym.make(args.env)
     
     obs = env.reset()
-    wandb.init(project="highway-env-rerun", reinit=True, settings=wandb.Settings(start_method="fork"), config=args)
+    wandb.init(project="highway-env-rerun_v2", reinit=True, settings=wandb.Settings(start_method="fork"), config=args)
     wandb.run.name = log_path.split("/")[-2]
     wandb.run.save()
 
