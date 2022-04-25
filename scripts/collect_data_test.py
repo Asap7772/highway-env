@@ -105,15 +105,17 @@ def rollouts(model, env_name='highway-v0', n_rollouts=200, max_steps=1000):
     obs = env.reset()
     done = False
     traj = defaultdict(list)
+    image = env.render(mode="rgb_array")
+    
     while not done:
-      action, _states = model.predict(obs)
+      action, _states = model.predict(obs)  
       next_obs, rew, done, _info = env.step(action.item())
-      image = env.render(mode="rgb_array")
-      
+      next_image = env.render(mode="rgb_array")
       obs_full = {'image': image, 'state': obs}
+      next_obs_full = {'image': next_image, 'state': next_obs}
       
       traj['observations'].append(obs_full)
-      traj['next_observations'].append(next_obs)
+      traj['next_observations'].append(next_obs_full)
       traj['actions'].append(action)
       traj['rewards'].append(rew)
       traj['done'].append(done)
@@ -121,6 +123,8 @@ def rollouts(model, env_name='highway-v0', n_rollouts=200, max_steps=1000):
       traj['info'].append(_info)
       
       obs = next_obs
+      image = next_image
+      
       i += 1
       
       if i > max_steps:
