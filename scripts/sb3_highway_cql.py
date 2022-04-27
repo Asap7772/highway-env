@@ -71,9 +71,9 @@ if __name__ == '__main__':
     argparser.add_argument('--learning_rate', type=float, default=3e-4, help='Learning rate')
 
     argparser.add_argument('--dataset_path', type=str, help='Dataset path', default='/home/asap7772/asap7772/highway_replay_buffers/highwayfast')
-    # argparser.add_argument('--dataset_start_idx', type=int, help='Dataset start index', default=5000)
+    argparser.add_argument('--dataset_start_idx', type=int, help='Dataset start index', default=5000)
     argparser.add_argument('--dataset_end_idx', type=int, help='Dataset end index', default=100000)
-    argparser.add_argument('--dataset_end_idx', type=int, help='Dataset end index', default=5000)
+    # argparser.add_argument('--dataset_end_idx', type=int, help='Dataset end index', default=5000)
     argparser.add_argument('--dataset_idx_diff', type=int, help='Dataset index difference', default=5000)
 
     argparser.add_argument('--with_minq', action='store_false', help='With minq')
